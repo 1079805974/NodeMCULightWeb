@@ -66,10 +66,12 @@ export default window.bus = new Vue({
     connected: false,
     lampList:[//有设备连接时 在这个列表中加入.
       {
+        id:123,
         name:'客厅顶灯',
         voltage: 3.2
       },
       {
+        id:456,
         name:'卧室灯',
         voltage: 2.2
       },
