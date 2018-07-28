@@ -1,21 +1,29 @@
 <template>
   <div id="app">
-    <d-header />
+    <d-header :icon="icon" @back="back"/>
     <router-view/>
   </div>
 </template>
 
 <script>
 import DHeader from "./components/Header.vue";
-
+import bus from "./bus.js"
 export default {
   components: {DHeader},
   name: 'App',
   data(){
     return{
-      title:'',
-      icon:''
+      title: '',
+      icon: false
     }
+  },
+  methods:{
+    back(){
+      this.$router.go(-1)
+    }
+  },
+  mounted(){
+    bus.$on('icon', icon=>this.icon=icon)
   }
 }
 </script>

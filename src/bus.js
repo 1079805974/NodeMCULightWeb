@@ -1,11 +1,85 @@
 import Vue from 'vue'
+import io from 'socket.io-client'
 
-const socket = new WebSocket('ws://127.0.0.1:8080/socket')
+const socket = io('http://localhost:8080'); 
+
+socket.on('connect', function () { 
+  console.log('连接服务器成功!')
+  bus.connected = true
+});
+
+socket.on('message', function (message) { 
+  console.log('服务器发来消息:'+message)
+  if(message=='新设备敖德萨顺风顺水'){
+    bus.lampList.push({
+        id: 123,
+        name:'客厅顶灯',
+        voltage: 3.2
+    })
+  }
+});
+
+function openLight(){
+  console.log('你想开灯?')
+  socket.send('嘤嘤嘤')
+}
+
+function closeLight(){
+  console.log('你要关灯!')
+}
+
+function changeBrightness(brightness){
+  console.log(`你把亮度调整为 ${brightness}`)
+}
+
+function changeRed(red){
+  console.log(`你把红灯调整为:${red}`)
+}
+
+function changeBlue(blue){
+  console.log('调整蓝灯!')
+}
+
+function changeGreen(green){
+  console.log('调绿的呢!')
+}
+function changeName(name){
+  console.log(`你把名字改成${name}了`)
+}
+function complete(){
+  console.log('你点击了完成按钮!')
+}
+
+var events = {
+  'openLight':openLight,
+  'closeLight':closeLight,
+  'changeBrightness':changeBrightness,
+  'changeRed':changeRed,
+  'changeBlue':changeBlue,
+  'changeGreen':changeGreen,
+  'complete':complete,
+  'changeName':changeName
+}
 
 export default window.bus = new Vue({
   data: {
     connected: false,
-    host:'http://127.0.0.1:8080'
+    lampList:[//有设备连接时 在这个列表中加入.
+      {
+        name:'客厅顶灯',
+        voltage: 3.2
+      },
+      {
+        name:'卧室灯',
+        voltage: 2.2
+      },
+    ],
+    sensorList:[]
+  },
+  watch:{
+    lampList(val){
+      this.$emit('updateList', val)
+    }
   },
   methods: {
     getTime() {
@@ -32,7 +106,8 @@ export default window.bus = new Vue({
       this.connected = false
       this.$emit('disconnect')
     }
-    this.$on('send', this.send)
-    //this.socket.connect(host)
-  }
+    for(let index in events){
+      this.$on(index, events[index])
+    }
+    }
 })

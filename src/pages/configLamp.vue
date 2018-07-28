@@ -36,7 +36,7 @@
       </mu-list-item>
     </mu-list>
     <div style="text-align: center;">
-    <mu-raised-button label="完成" primary/>
+    <mu-raised-button label="完成" @click="complete" primary/>
     </div>
   </div>
 </template>
@@ -74,23 +74,26 @@
     },
     watch:{
       open(val){
-        if(!val){
+        if(val){
           //当用户关掉关灯开关
-          this.axios.post(bus.host+'/lampStatus?id='+this.id, JSON.stringify({cmd:'setBrightness',brightness:0}))
+          bus.$emit('openLight')
         }else{
           //当用户打开灯泡开关
-          this.axios.post(bus.host+'/lampStatus?id='+this.id, JSON.stringify({cmd:'setBrightness',brightness:this.slider*10}))
+          bus.$emit('closeLight')
         }
       },
-      slider(val){
+      slider(){
         if(!this.waiting){
           this.waiting = true
           setTimeout(()=>{
             this.waiting = false
-              this.axios.post(bus.host+'/lampStatus?id='+this.id,JSON.stringify({cmd:'setBrightness',brightness:this.slider*10}))
+              bus.$emit('changeBrightness', this.slider)
             }
             , 200)
         }
+      },
+      name(val){
+        bus.$emit('changeName',val)
       }
     },
     computed:{
@@ -99,14 +102,21 @@
       }
     },
     methods: {
+      complete(){
+        bus.$emit('complete')
+        this.$router.go(-1)
+      },
       changeRed(val){
         this.red = Math.floor(val/100*255)
+        bus.$emit('changeRed', this.red)
       },
       changeBlue(val){
         this.blue = Math.floor(val/100*255)
+        bus.$emit('changeBlue', this.blue)
       },
       changeGreen(val){
         this.green = Math.floor(val/100*255)
+        bus.$emit('changeGreen', this.green)
       },
       switchAlarm() {
         this.timer2 = !this.timer2
@@ -120,6 +130,12 @@
           this.$refs.textField.focus()
         )
       }
+    },
+    mounted(){
+      bus.$emit('icon', true)
+    },
+    destroyed(){
+      bus.$emit('icon', false)
     }
   }
 </script>
