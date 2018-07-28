@@ -37,7 +37,7 @@
     },
     mounted() {
       this.getListData()
-      bus.$on('updateList', list=>this.lampList = list)
+      bus.$on('updateList', list => this.lampList = list)
     }
   }
 </script>

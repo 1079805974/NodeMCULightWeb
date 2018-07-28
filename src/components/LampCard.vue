@@ -2,7 +2,7 @@
   <mu-card>
     <mu-card-header :title="lamp.name" titleClass="lamp-name">
       <i style="position: absolute;left: 70%" class="fa fa-lightbulb-o fa-5x"></i>
-      <battery slot="default" :percent="parseInt(lamp.voltage / 3.3 * 100)"/>
+      <battery slot="default" :percent="lamp.voltage ? parseInt(lamp.voltage / 3.3 * 100) : 100"/>
     </mu-card-header>
     <mu-card-actions>
       <mu-raised-button @click="configLamp" label="遥控" primary/>

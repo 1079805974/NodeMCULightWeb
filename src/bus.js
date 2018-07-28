@@ -10,12 +10,23 @@ socket.on('connect', function () {
 
 socket.on('message', function (message) { 
   console.log('服务器发来消息:'+message)
-  if(message=='新设备敖德萨顺风顺水'){
+  if(message=='新设备'){
     bus.lampList.push({
         id: 123,
         name:'客厅顶灯',
-        voltage: 3.2
+        voltage: 3.2,
+        red: 12,
+        green: 12,
+        blue: 12,
+        PIR: true,
+        sensor: 1023,
+        open:true
     })
+  }else if(message == `{"光感亮度": 250}`){
+    var msg = JSON.parse(message)
+    console.log(msg.光感亮度)
+  }else if(message == `{"sensor" : "GY", "type" : "sunrise"}`){
+    console.log(`白天到了!!!!!`)
   }
 });
 
@@ -43,9 +54,11 @@ function changeBlue(blue){
 function changeGreen(green){
   console.log('调绿的呢!')
 }
+
 function changeName(name){
   console.log(`你把名字改成${name}了`)
 }
+
 function complete(){
   console.log('你点击了完成按钮!')
 }
@@ -66,9 +79,16 @@ export default window.bus = new Vue({
     connected: false,
     lampList:[//有设备连接时 在这个列表中加入.
       {
-        id:123,
+        id: 123,
         name:'客厅顶灯',
-        voltage: 3.2
+        voltage: 3.2,
+        red: 12,
+        green: 12,
+        blue: 12,
+        PIR: true,
+        sensor: 1023,
+        open:true,
+        brightness:20
       },
       {
         id:456,

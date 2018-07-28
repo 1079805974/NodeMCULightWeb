@@ -25,13 +25,13 @@
       <mu-list-item describeText="调整色彩(左侧预览)" class="brightnessConfig">
         <mu-avatar icon=":fa fa-lightbulb-o fa-2x" backgroundColor="white" :iconSize="40" :color="mixedColor" slot="leftAvatar"/>
         red value:{{red}}
-        <mu-slider :step="2"
+        <mu-slider :step="2" v-model="red"
                    @change="changeRed" :disabled="!open" />
         green value:{{green}}
-        <mu-slider :step="2"
+        <mu-slider :step="2" v-model="green"
                    @change="changeGreen" :disabled="!open" />
         blue value:{{blue}}
-        <mu-slider :step="2"
+        <mu-slider :step="2" v-model="blue"
                    @change="changeBlue" :disabled="!open" />
       </mu-list-item>
     </mu-list>
@@ -49,27 +49,25 @@
     components: {Battery},
     name: 'configLamp',
     props:{
-      batteryLevel:{
-        type:Number,
-        default:50
-      },
       id:{
         type:String,
+        default:'1'
       }
     },
     data() {
       return {
         previewColor:{'font-weight':'500','font-size': '2em!import'},
         modify: false,
-        open: true,
         timer2: false,
         alertTime2: '',
-        slider: 50,
-        name: '客厅顶灯',
+        name: '灯',
+        waiting:false,
+        batteryLevel:50,
         red:0,
         green:0,
         blue:0,
-        waiting:false
+        open:false,
+        slider:50
       }
     },
     watch:{
@@ -107,15 +105,15 @@
         this.$router.go(-1)
       },
       changeRed(val){
-        this.red = Math.floor(val/100*255)
+        this.red = val
         bus.$emit('changeRed', this.red)
       },
       changeBlue(val){
-        this.blue = Math.floor(val/100*255)
+        this.blue = val
         bus.$emit('changeBlue', this.blue)
       },
       changeGreen(val){
-        this.green = Math.floor(val/100*255)
+        this.green = val
         bus.$emit('changeGreen', this.green)
       },
       switchAlarm() {
@@ -133,6 +131,16 @@
     },
     mounted(){
       bus.$emit('icon', true)
+      bus.lampList.forEach(ele=>{
+        if(ele.id == this.id){
+          this.batteryLevel = Math.floor(ele.voltage / 3.3 * 100)
+          this.slider = ele.brightness 
+          this.red = ele.red
+          this.blue = ele.blue
+          this.green = ele.green
+          this.open = ele.open
+        }  
+      })
     },
     destroyed(){
       bus.$emit('icon', false)
