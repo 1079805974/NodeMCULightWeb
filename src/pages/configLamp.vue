@@ -139,6 +139,7 @@
           this.blue = ele.blue
           this.green = ele.green
           this.open = ele.open
+          this.name = ele.name
         }  
       })
     },
